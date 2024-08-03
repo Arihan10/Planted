@@ -1,0 +1,124 @@
+.chat {
+  position: relative;
+  background: #111629;
+  box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.25);
+  width: 23rem;
+
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .suggestionsWrapper {
+    position: absolute;
+    display: none;
+    width: calc(100% - 2rem);
+
+    flex-direction: column;
+    gap: 0.75rem;
+
+    &.empty {
+      display: flex;
+    }
+
+    .title {
+      color: #f0f0f0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+
+      .suggestion {
+        padding: 0.5rem;
+        color: #8a8a8a;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border-radius: 10px;
+        border: 1px solid #8a8a8a;
+        width: 100%;
+        cursor: pointer;
+
+        &:hover {
+          background: #1e1f2b;
+        }
+      }
+    }
+  }
+
+  .messages {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+
+    height: 30rem;
+
+    .message {
+      color: #f0f0f0;
+      font-size: 0.9rem;
+
+      &.user {
+        align-self: flex-end;
+        border-radius: 40px;
+        background: rgba(227, 227, 227, 0.2);
+        backdrop-filter: blur(15px);
+        padding: 0.5rem 1rem;
+      }
+
+      &.bot {
+        align-self: flex-start;
+      }
+    }
+  }
+
+  .form {
+    overflow: hidden;
+    border-radius: 48.585px;
+    background: rgba(138, 138, 138, 0.32);
+    display: flex;
+
+    input {
+      border: none;
+      background: none;
+      color: #f0f0f0;
+      font-size: 0.9rem;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      border-radius: 48.585px;
+      outline: none;
+    }
+
+    button {
+      position: relative;
+      background: none;
+      border: none;
+      color: #f0f0f0;
+      font-size: 1rem;
+      cursor: pointer;
+
+      background: rgba(18, 18, 18, 0.3);
+      border-radius: 50%;
+      top: 10%;
+      right: 0.15rem;
+
+      height: 80%;
+      aspect-ratio: 1 / 1;
+
+      img {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50%;
+        height: 50%;
+        position: absolute;
+        object-fit: contain;
+      }
+    }
+  }
+}
