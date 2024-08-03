@@ -4,8 +4,6 @@
   gap: 0.5rem;
 
   .stat {
-    border-radius: 22.961px;
-    border: 3px solid #111629;
     background: #c7f5d3;
     box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.25);
     padding: 1rem;
@@ -36,8 +34,9 @@
     }
 
     .goodbad {
-      padding: 0.25rem 0.5rem;
-      border-radius: 22.961px;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      text-transform: capitalize;
       &.green {
         color: green;
         background: #c7f5d3;

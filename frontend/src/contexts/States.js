@@ -8,13 +8,14 @@ export function AppStates({ children }) {
   const [alerts, setAlerts] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({});
+  const [loadingModal, setLoadingModal] = useState(false);
 
   const login = (walletId, secret) => {
     setUser({ walletId, secret });
     setIsLoggedIn(true);
     localStorage.setItem("user", JSON.stringify({ walletId, secret }));
     if (window.location.pathname === "/login") {
-      window.location.replace("/plants");
+      window.location.replace("/explore");
     }
   };
 
@@ -36,7 +37,6 @@ export function AppStates({ children }) {
   };
 
   useEffect(() => {
-    console.log("hey");
     let tmpUser = JSON.parse(localStorage.getItem("user"));
     if (tmpUser && tmpUser.walletId && tmpUser.secret) {
       const newUser = tmpUser;
@@ -62,6 +62,8 @@ export function AppStates({ children }) {
         login,
         isLoggedIn,
         user,
+        loadingModal,
+        setLoadingModal,
       }}
     >
       {children}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useData } from "@/contexts/States";
 import styles from "@/styles/components/plants/Chat.module.scss";
 import { useEffect, useState, useRef } from "react";
 
@@ -16,9 +17,13 @@ export default function Chat() {
   const currentMessageRef = useRef(null);
   const messagesContainerRef = useRef(null);
 
+  const { setLoadingModal } = useData();
+
   const getSuggestions = () => {
     // TODO: get suggestions from the server
+    setLoadingModal(true);
     setSuggestions(tmpSuggestions);
+    setLoadingModal(false);
   };
 
   useEffect(() => {
@@ -30,9 +35,10 @@ export default function Chat() {
       messagesContainerRef.current.scrollHeight;
   }, [messages]);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
+    setLoadingModal(true);
     setTimeout(() => {
       setMessages([
         ...messages,
@@ -47,6 +53,7 @@ export default function Chat() {
       ]);
       setCurrentMessage("");
       currentMessageRef.current.value = "";
+      setLoadingModal(false);
     }, 100);
   };
   const onChange = (e: any) => {

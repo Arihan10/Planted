@@ -1,13 +1,15 @@
 #navbar {
+  position: fixed;
   border-radius: 40px;
   background: rgba(227, 227, 227, 0.5);
   backdrop-filter: blur(15px);
   padding: 0.35rem;
   width: fit-content;
-  position: fixed;
+
   top: 2rem;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 10;
 
   ul {
     display: flex;

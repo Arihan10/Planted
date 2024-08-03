@@ -9,9 +9,6 @@ export default function Navbar() {
     <nav id={styles.navbar}>
       <ul>
         <li>
-          <Link href="/">Home</Link>
-        </li>
-        <li>
           <Link href="/explore">explore</Link>
         </li>
         <li>

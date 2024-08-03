@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useData } from "@/contexts/States";
 import styles from "@/styles/pages/Login.module.scss";
 
@@ -9,14 +9,24 @@ export default function Login() {
   const [walletId, setWalletId] = useState("");
   const [secret, setSecret] = useState("");
 
+  const { setLoadingModal } = useData();
+
   const handleLogin = (e: any) => {
     e.preventDefault();
 
+    setLoadingModal(true);
     let randomNumber = Math.random() * 3 + 1;
+    // TODO: login
     setTimeout(() => {
       login(walletId, secret);
+      setLoadingModal(false);
     }, randomNumber * 1000);
   };
+
+  // Update page title
+  useEffect(() => {
+    document.title = "Planted | Login";
+  }, []);
   return (
     <main id={styles.login} className="background">
       <form onSubmit={handleLogin} className={styles.form}>

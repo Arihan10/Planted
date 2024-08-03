@@ -13,13 +13,23 @@ export default function PlantDetail({
   price,
   walletId,
 }: any) {
-  const { user } = useData();
+  const { user, setLoadingModal } = useData();
   const isMine = () => {
     return walletId == user.walletId;
   };
 
   const handleChange = (file: any) => {
+    setLoadingModal(true);
     console.log(file);
+    // TODO: upload the file
+    setLoadingModal(false);
+  };
+
+  const onClickBuy = () => {
+    setLoadingModal(true);
+    console.log("buy");
+    // TODO: buy the plant
+    setLoadingModal(false);
   };
 
   return (
@@ -28,7 +38,7 @@ export default function PlantDetail({
         <img src={image} alt={name} />
       </div>
       {!isMine() ? (
-        <div className={styles.uploadWrapper}>
+        <div className={`${styles.uploadWrapper} shadow`}>
           <FileUploader
             handleChange={handleChange}
             name="file"
@@ -51,7 +61,13 @@ export default function PlantDetail({
           className={`${styles.priceAndBuy}  ${isMine() ? styles.center : ""}`}
         >
           <div className={styles.price}>{price}</div>
-          {isMine() ? "" : <button className={styles.buy}>Buy</button>}
+          {isMine() ? (
+            ""
+          ) : (
+            <button onClick={onClickBuy} className={styles.buy}>
+              Buy
+            </button>
+          )}
         </div>
       </div>
     </div>

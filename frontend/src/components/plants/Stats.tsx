@@ -2,7 +2,6 @@ import styles from "@/styles/components/plants/Stats.module.scss";
 
 export default function Stats({ stats }: any) {
   const getStrength = (strength: any) => {
-    console.log(strength);
     if (strength < 50) {
       return "bad";
     } else if (strength < 70) {
@@ -32,7 +31,7 @@ export default function Stats({ stats }: any) {
               </div>
             </div>
             {stat.advice && getStrength(stat.strength) != "good" ? (
-              <div className={styles.detail}>Advice: {stat.advice}</div>
+              <div className={styles.detail}>{stat.advice}</div>
             ) : (
               ""
             )}

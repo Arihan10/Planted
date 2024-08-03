@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -16,13 +20,14 @@ a {
 }
 
 .background {
-  background: radial-gradient(50% 50% at 50% 50%, #56bd8f 0%, #000 100%);
+  /* background: radial-gradient(50% 50% at 50% 50%, #56bd8f 0%, #000 100%); */
   min-height: 100vh;
 
   padding: 10rem 2rem;
 }
 
 .shadow {
-  border-radius: 20px;
+  border-radius: 15px;
   box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.25);
+  border: 3px solid black;
 }

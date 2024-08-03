@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useData } from "@/contexts/States";
 import styles from "@/styles/pages/AddNew.module.scss";
 
@@ -13,13 +13,26 @@ export default function AddPlant() {
   const [image, setImage] = useState(null);
   const [imageURL, setImageURL] = useState(null);
 
+  const { setLoadingModal } = useData();
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(image, name);
+    setLoadingModal(true);
+    if (!image || !name) {
+      setLoadingModal(false);
+      return;
+    }
+    console.log(name, image);
+    // TODO: upload the plant
+    setLoadingModal(false);
   };
 
+  // Update page title
+  useEffect(() => {
+    document.title = "Planted | Add Plant";
+  }, []);
+
   const handleChange = (file: any) => {
-    console.log(file);
     // set the image
     setImage(file);
     // get the url
@@ -32,7 +45,7 @@ export default function AddPlant() {
 
   return (
     <main id={styles.addNew} className="background">
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={handleSubmit} className={`${styles.form} shadow`}>
         <div className={styles.title}>Add a new Plant</div>
         <div className={styles.imageWrapper}>
           {imageURL && <img src={imageURL} alt="Plant" />}
