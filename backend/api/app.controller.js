@@ -145,6 +145,7 @@ export default class AppCtrl {
                 name: name,
                 walletID: walletID,
                 seed: seed,
+                type: resJSON.type,
                 colVibrancy: resJSON.colVibrancy,
                 colVibrancyAdvice: resJSON.colVibrancyAdvice,
                 LAI: resJSON.LAI,
@@ -303,12 +304,13 @@ export default class AppCtrl {
             console.log(resJSON); 
 
             const _data = {
+                id: id,
                 data : {
                     imgURL: imgURL,
-                    id: id,
                     name: body.name,
                     walletID: body.walletID,
                     seed: body.seed,
+                    type: resJSON.type,
                     colVibrancy: resJSON.colVibrancy,
                     colVibrancyAdvice: resJSON.colVibrancyAdvice,
                     LAI: resJSON.LAI,
