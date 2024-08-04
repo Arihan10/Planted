@@ -9,8 +9,9 @@ router.
 
 router.
     route("/plant")
-    .get(AppCtrl.apiGetPlant)
     .post(AppCtrl.apiPostPlant)
     .put(AppCtrl.apiPutPlant)
+
+router.route("/getPlant").post(AppCtrl.apiGetPlant)
 
 export default router
