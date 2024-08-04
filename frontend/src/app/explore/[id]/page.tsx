@@ -7,25 +7,38 @@ import Stats from "@/components/plants/Stats";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useData } from "@/contexts/States";
-
-const currentPlantTmp = {
-  name: "Plumi",
-  type: "Something",
-  price: "$10",
-  image: "/images/01.png",
-};
+import axios from "axios";
+import { parseResponse } from "@/utils/helper";
 
 export default function Plant() {
   const { id } = useParams();
-  const { setLoadingModal } = useData();
+  const { setLoadingModal, setCurrentPage, addAlert, user } = useData();
 
   const [currentPlant, setCurrentPlant] = useState({});
 
   const getCurrentPlant = async () => {
     setLoadingModal(true);
     // TODO: call api
-    setCurrentPlant(currentPlantTmp);
-    setLoadingModal(false);
+    axios
+      .post(process.env.NEXT_PUBLIC_SERVER_URL + "/getPlant", {
+        id: id,
+      })
+      .then((res) => {
+        const response = parseResponse([res.data])[0];
+        setCurrentPlant(response);
+        console.log(response);
+        addAlert({
+          type: "success",
+          message: "Plant recieved successfully",
+          time: 3000,
+        });
+        setLoadingModal(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        addAlert({ type: "error", message: "Failed to add plant", time: 3000 });
+        setLoadingModal(false);
+      });
   };
 
   useEffect(() => {
@@ -35,35 +48,29 @@ export default function Plant() {
 
   // Update page title
   useEffect(() => {
+    setCurrentPage("");
     document.title = "Planted | Plant";
   }, []);
 
   return (
     <main id={styles.dashboard} className="background">
-      <PlantDetail {...currentPlant} />
-      <Chat />
+      <PlantDetail
+        {...currentPlant}
+        id={id}
+        setCurrentPlant={setCurrentPlant}
+      />
+      <Chat id={id} imgURL={currentPlant.imgURL} />
       <Stats
-        stats={[
-          {
-            name: "Introduction to AI",
-            strength: "40",
-            advice: "a",
-          },
-          {
-            name: "Introduction to AI",
-            strength: "50",
-            advice: "",
-          },
-          {
-            name: "Introduction to AI",
-            strength: "50",
-            advice: "",
-          },
-          {
-            name: "Introduction to AI",
-            strength: "50",
-            advice: "",
-          },
+        plant={currentPlant}
+        names={[
+          "colVibrancy",
+          "LAI",
+          "wilting",
+          "spotting",
+          "symmetry",
+          "growthPat",
+          "pests",
+          "flowering",
         ]}
       />
     </main>

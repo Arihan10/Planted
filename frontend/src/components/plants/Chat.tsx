@@ -3,21 +3,54 @@
 import { useData } from "@/contexts/States";
 import styles from "@/styles/components/plants/Chat.module.scss";
 import { useEffect, useState, useRef } from "react";
+import axios from "axios";
+import * as PlayHT from "playht";
 
 const tmpSuggestions = [
-  "Join this Course",
-  "Join this Course",
-  "Join this Course",
+  "How are you feeling today?",
+  "Do you need anything?",
+  "Hey baby.",
 ];
 
-export default function Chat() {
+export default function Chat({ id, imgURL }: any) {
   const [suggestions, setSuggestions] = useState([]);
   const [messages, setMessages] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const currentMessageRef = useRef(null);
   const messagesContainerRef = useRef(null);
 
-  const { setLoadingModal } = useData();
+  const { setLoadingModal, addAlert } = useData();
+  const [audio, setAudio] = useState(null);
+  const audioRef = useRef(null);
+
+  const fetchAudio = async (text: any) => {
+    const response = await fetch(
+      `https://texttospeech.googleapis.com/v1beta1/text:synthesize?key=${process.env.NEXT_PUBLIC_API}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          audioConfig: {
+            audioEncoding: "MP3",
+            effectsProfileId: ["small-bluetooth-speaker-class-device"],
+            pitch: 0,
+            speakingRate: 1,
+          },
+          input: { text },
+          voice: {
+            languageCode: "en-US",
+            name: "en-US-Journey-F",
+          },
+        }),
+      }
+    );
+
+    const data = await response.json();
+    console.log(`data:audio/mpeg;base64,${data.audioContent}`);
+    setAudio(`data:audio/mpeg;base64,${data.audioContent}`);
+  };
 
   const getSuggestions = () => {
     // TODO: get suggestions from the server
@@ -25,6 +58,13 @@ export default function Chat() {
     setSuggestions(tmpSuggestions);
     setLoadingModal(false);
   };
+
+  useEffect(() => {
+    if (audio && audioRef.current) {
+      audioRef.current.play();
+      setAudio(null);
+    }
+  }, [audioRef.current]);
 
   useEffect(() => {
     getSuggestions();
@@ -38,23 +78,39 @@ export default function Chat() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    setLoadingModal(true);
-    setTimeout(() => {
-      setMessages([
-        ...messages,
-        {
-          message: currentMessage,
-          role: "user",
-        },
-        {
-          message: "hi",
-          role: "assistant",
-        },
-      ]);
-      setCurrentMessage("");
-      currentMessageRef.current.value = "";
-      setLoadingModal(false);
-    }, 100);
+    let currentMessages = [
+      ...messages,
+      { content: currentMessage, role: "user" },
+    ];
+    setMessages(currentMessages);
+    setCurrentMessage("");
+    setAudio(null);
+    currentMessageRef.current.value = "";
+    axios
+      .post(process.env.NEXT_PUBLIC_SERVER_URL + "/plantChat", {
+        id: id,
+        imgURL: imgURL,
+        messagesList: currentMessages,
+      })
+      .then((res) => {
+        console.log(res.data);
+        currentMessages.push({ content: res.data.message, role: "assistant" });
+        fetchAudio(res.data.message);
+        setMessages(currentMessages);
+        addAlert({
+          message: "Message sent successfully",
+          type: "success",
+          time: 3000,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        addAlert({
+          message: "Message could not be sent",
+          type: "error",
+          time: 3000,
+        });
+      });
   };
   const onChange = (e: any) => {
     setCurrentMessage(e.target.value);
@@ -67,6 +123,12 @@ export default function Chat() {
   };
   return (
     <div className={`${styles.chat} shadow`}>
+      {audio && (
+        <audio ref={audioRef} controls src={audio} style={{ display: "none" }}>
+          Your browser does not support the audio element.
+        </audio>
+      )}
+
       <div
         className={`${styles.suggestionsWrapper} ${
           messages.length == 0 && currentMessage.length == 0 ? styles.empty : ""
@@ -95,7 +157,7 @@ export default function Chat() {
               message.role == "user" ? styles.user : styles.bot
             }`}
           >
-            {message.message}
+            {message.content}
           </div>
         ))}
       </div>

@@ -9,11 +9,12 @@ export function AppStates({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({});
   const [loadingModal, setLoadingModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState("");
 
-  const login = (walletId, secret) => {
-    setUser({ walletId, secret });
+  const login = (walletId, seed) => {
+    setUser({ walletId, seed });
     setIsLoggedIn(true);
-    localStorage.setItem("user", JSON.stringify({ walletId, secret }));
+    localStorage.setItem("user", JSON.stringify({ walletId, seed }));
     if (window.location.pathname === "/login") {
       window.location.replace("/explore");
     }
@@ -38,10 +39,10 @@ export function AppStates({ children }) {
 
   useEffect(() => {
     let tmpUser = JSON.parse(localStorage.getItem("user"));
-    if (tmpUser && tmpUser.walletId && tmpUser.secret) {
+    if (tmpUser && tmpUser.walletId && tmpUser.seed) {
       const newUser = tmpUser;
-      login(newUser.walletId, newUser.secret);
-    } else if (!user.walletId || !user.secret) {
+      login(newUser.walletId, newUser.seed);
+    } else if (!user.walletId || !user.seed) {
       if (window.location.pathname !== "/login") {
         window.location.replace("/login");
       }
@@ -64,6 +65,8 @@ export function AppStates({ children }) {
         user,
         loadingModal,
         setLoadingModal,
+        currentPage,
+        setCurrentPage,
       }}
     >
       {children}

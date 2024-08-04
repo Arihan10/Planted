@@ -3,26 +3,70 @@
 import { useData } from "@/contexts/States";
 import styles from "@/styles/components/plants/PlantDetail.module.scss";
 import { FileUploader } from "react-drag-drop-files";
+import axios from "axios";
+import { pinFileToIPFS } from "@/utils/helper";
 
 const fileTypes = ["JPG", "PNG", "GIF", "PNG", "JPEG"];
 
+const PINATA_GATEWAY = "https://aquamarine-rainy-kangaroo-939.mypinata.cloud";
+
 export default function PlantDetail({
-  image,
+  imgURL,
   name,
   type,
   price,
-  walletId,
+  walletID,
+  id,
+  setCurrentPlant,
 }: any) {
-  const { user, setLoadingModal } = useData();
+  const { user, setLoadingModal, addAlert } = useData();
   const isMine = () => {
-    return walletId == user.walletId;
+    return walletID == user.walletId;
   };
 
-  const handleChange = (file: any) => {
+  const handleChange = async (file: any) => {
     setLoadingModal(true);
-    console.log(file);
-    // TODO: upload the file
-    setLoadingModal(false);
+
+    let ipfsLink = "";
+    // upload file
+    try {
+      const ipfsHash = await pinFileToIPFS(file);
+      ipfsLink = `${PINATA_GATEWAY}/ipfs/${ipfsHash}`;
+    } catch (error) {}
+
+    if (!ipfsLink) {
+      addAlert({
+        type: "error",
+        message: "Failed to upload image",
+        time: 3000,
+      });
+      setLoadingModal(false);
+      return;
+    }
+
+    axios
+      .put(process.env.NEXT_PUBLIC_SERVER_URL + "/plant", {
+        id: id,
+        imgURL: ipfsLink,
+      })
+      .then((res) => {
+        setCurrentPlant(JSON.parse(res.data));
+        addAlert({
+          type: "success",
+          message: "Plant chnaged successfully",
+          time: 3000,
+        });
+        setLoadingModal(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        addAlert({
+          type: "error",
+          message: "Failed to chnage the ",
+          time: 3000,
+        });
+        setLoadingModal(false);
+      });
   };
 
   const onClickBuy = () => {
@@ -35,9 +79,9 @@ export default function PlantDetail({
   return (
     <div className={styles.plantDetail}>
       <div className={`${styles.imageWrapper} shadow`}>
-        <img src={image} alt={name} />
+        <img src={imgURL} alt={name} />
       </div>
-      {!isMine() ? (
+      {isMine() ? (
         <div className={`${styles.uploadWrapper} shadow`}>
           <FileUploader
             handleChange={handleChange}
