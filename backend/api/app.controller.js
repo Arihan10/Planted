@@ -35,6 +35,12 @@ You will output only the above JSON and nothing else.
 
 You may also be provided the property evaluations for a previous image of a plant, and may use previous property evaluations to influence new evaluations and advice in a natural way. If previous property evaluations exist, they will also be provided in the above JSON format.`;
 
+let plantSimSystem = `You are a plant simulator. 
+
+Given an image of a plant and a JSON object of it's properties, simulate a conversation between a plant (you) and it's caretaker (the user). 
+
+You will respond to user messages by "speaking" as the plant. You will act as nothing but the plant, focusing on helping them to understand how to take better care of you. You will keep responses short.`;
+
 export default class AppCtrl {
     static async dataFromImg(req, res, next) {
         let imgURL = req.body.imgURL
@@ -362,7 +368,67 @@ export default class AppCtrl {
         });
     }
 
-    static async talkPlant(req, res, next) {
+    static async apiTalkPlant(req, res, next) {
+        let id = req.body.id
+        let imgURL = req.body.imgURL
+        let messagesList = req.body.messagesList
 
+        const response = await fetch('http://terrahacks.onrender.com/getPlant/' + id);
+        const data = await response.json(); 
+        console.log(data); 
+
+        let userMsg = `Properties:
+            {
+                "type": ${data.type},
+                "colVibrancy": ${data.colVibrancy},
+                "colVibrancyAdvice": ${data.colVibrancyAdvice},
+                "LAI": ${data.LAI},
+                "LAIAdvice": ${data.LAIAdvice},
+                "wilting": ${data.wilting},
+                "wiltingAdvice": ${data.wiltingAdvice},
+                "spotting": ${data.spotting},
+                "spottingAdvice": ${data.spottingAdvice},
+                "symmetry": ${data.symmetry},
+                "symmetryAdvice": ${data.symmetryAdvice},
+                "growthPat": ${data.growthPat},
+                "growthPatAdvice": ${data.growthPatAdvice},
+                "pests": ${data.pests},
+                "pestsAdvice": ${data.pestsAdvice},
+                "flowering": ${data.flowering},
+                "floweringAdvice": ${data.floweringAdvice},
+            }
+                
+            Image:`
+
+        let messages = [
+            { role: "system", content: plantSimSystem },
+            { role: "user", content: [
+                { 
+                    type: "text", 
+                    text: userMsg 
+                },
+                { 
+                    type: "image_url", 
+                    image_url: {
+                        url: imgURL,
+                    }
+                }
+            ]}
+        ]
+
+        for (let i = 0; i < messagesList.length; ++i) {
+            messages.push(messagesList[i]);
+        }
+
+        const _response = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: messages,
+            max_tokens: 1000
+        }); 
+
+        // console.log(response.choices[0]["message"]["content"]); 
+
+        // res.json({ message: response.choices[0]["message"]["content"] })
+        res.json ({message: _response.choices[0]["message"]["content"]})
     }
 }

@@ -14,4 +14,6 @@ router.
 
 router.route("/getPlant").post(AppCtrl.apiGetPlant)
 
+router.route("/plantChat").post(AppCtrl.apiTalkPlant)
+
 export default router
