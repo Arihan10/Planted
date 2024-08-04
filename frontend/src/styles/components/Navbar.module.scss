@@ -1,0 +1,52 @@
+#navbar {
+  position: fixed;
+  border-radius: 40px;
+  background: rgba(227, 227, 227, 0.5);
+  backdrop-filter: blur(15px);
+  padding: 0.35rem;
+  width: fit-content;
+
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+
+  ul {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    gap: 1.25rem;
+
+    li {
+      padding: 0.75rem 1rem;
+      border-radius: 29.5px;
+
+      button {
+        color: #111629;
+      }
+
+      color: #111629;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #111629;
+        color: #f0f0f0;
+        button {
+          color: #f0f0f0;
+        }
+      }
+      button {
+        background: transparent;
+        border: none;
+      }
+
+      a,
+      button {
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: capitalize;
+        cursor: pointer;
+      }
+    }
+  }
+}

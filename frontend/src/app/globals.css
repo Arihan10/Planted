@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.background {
+  /* background: radial-gradient(50% 50% at 50% 50%, #56bd8f 0%, #000 100%); */
+  min-height: 100vh;
+
+  padding: 10rem 2rem;
+}
+
+.shadow {
+  border-radius: 15px;
+  box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.25);
+  border: 3px solid black;
+}
