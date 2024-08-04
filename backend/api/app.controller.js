@@ -230,15 +230,16 @@ export default class AppCtrl {
         try {
             const response = await fetch('http://terrahacks.onrender.com/getPlants');
             let data = await response.json();
-
+    
+            // Add average health score as a key-value property to each plant
             data = data.map(plant => {
                 const averageHealthScore = AppCtrl.calculateAverage(plant);
                 return {
                     ...plant,
-                    averageHealthScore: averageHealthScore
+                    [Object.keys(plant).length]: { key: 'averageHealthScore', value: averageHealthScore }
                 };
             });
-
+    
             console.log(data);
             res.json(data);
         } catch (error) {
@@ -367,19 +368,18 @@ export default class AppCtrl {
     static async apiGetPlant(req, res, next) {
         try {
             let id = req.body.id;
-
+    
             const response = await fetch('http://terrahacks.onrender.com/getPlant/' + id);
             let data = await response.json();
-
+    
+            // Calculate the average health score for the plant
             const averageHealthScore = AppCtrl.calculateAverage(data);
-
-            const plantWithAverage = {
-                ...data,
-                averageHealthScore: averageHealthScore
-            };
-
-            console.log(plantWithAverage);
-            res.json(plantWithAverage);
+    
+            // Add the average health score as a key-value property within the array structure
+            data[Object.keys(data).length] = { key: 'averageHealthScore', value: averageHealthScore };
+    
+            console.log(data);
+            res.json(data);
         } catch (error) {
             console.error('There was an error making the GET request:', error);
             res.json({ status: "error" });
