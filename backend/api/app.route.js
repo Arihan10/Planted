@@ -16,4 +16,6 @@ router.route("/getPlant").post(AppCtrl.apiGetPlant)
 
 router.route("/plantChat").post(AppCtrl.apiTalkPlant)
 
+router.route("/sellPlant").post(AppCtrl.apiSellPlant)
+
 export default router

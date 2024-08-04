@@ -445,10 +445,23 @@ export default class AppCtrl {
         res.json ({message: _response.choices[0]["message"]["content"]})
     }
 
-    static async sellPlant(req, res, next) {
-        let id = req.body.id
-        let fromWalletID = req.body.fromWalletID
-        let fromWalletSeed = req.body.fromWalletSeed
-        let toWalletID = req.body.toWalletID
+    static async apiSellPlant(req, res, next) {
+        let data = {
+            id: req.body.id,
+            fromWalletID: req.body.fromWalletID,
+            fromWalletSeed: req.body.fromWalletSeed,
+            toWalletID: req.body.toWalletID,
+            value: req.body.value
+        }
+
+        axios.post('https://terrahacks.onrender.com/sellPlant', data)
+            .then(response => {
+                console.log(response.data);
+                res.json(response.data);
+            })
+            .catch(error => {
+                console.error('There was an error making the POST request:', error);
+                res.json({ status: "error" })
+            });
     }
 }
