@@ -1,0 +1,30 @@
+{
+    "average_leaf_color": "#78AB46",
+    "color_variance": 12.5,
+    "chlorosis_index": 7.8,
+    "spot_percentage": 3.4,
+    "average_spot_size": 1.2,
+    "spot_count": 14,
+    "total_leaf_area": 150.6,
+    "leaf_area_percentage": 85.3,
+    "leaf_damage_percentage": 4.6,
+    "average_leaf_shape": {
+      "aspect_ratio": 1.8,
+      "compactness": 0.85,
+      "convexity": 0.9
+    },
+    "shape_variance": 0.07,
+    "stem_color": "#654321",
+    "branch_density": 3.4,
+    "stem_thickness": 0.8,
+    "flower_count": 5,
+    "flower_color": "#FFD700",
+    "flower_health_index": 9.2,
+    "wilting_index": 2.3,
+    "dryness_index": 4.5,
+    "pest_presence_probability": 0.3,
+    "growth_symmetry_index": 0.9,
+    "canopy_density": 0.78,
+    "height_estimate": 45.2
+  }
+  
