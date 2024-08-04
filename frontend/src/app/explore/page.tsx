@@ -3,70 +3,41 @@
 import styles from "@/styles/pages/Plants.module.scss";
 import { useEffect, useState } from "react";
 import { useData } from "@/contexts/States";
+import axios from "axios";
+import { parseResponse } from "@/utils/helper";
 
 import Link from "next/link";
-import { time } from "console";
 
-const tmpPlants = [
-  {
-    image: "/images/01.png",
-    name: "Plumi",
-    type: "Something",
-    price: "$10",
-    id: 1,
-    walletId: "0x123",
-  },
-  {
-    image: "/images/01.png",
-    name: "Plumi",
-    type: "Something",
-    price: "$10",
-    id: 2,
-    walletId: "0x123",
-  },
-  {
-    image: "/images/01.png",
-    name: "Plumi",
-    type: "Something",
-    price: "$10",
-    id: 3,
-    walletId: "0x123",
-  },
-  {
-    image: "/images/01.png",
-    name: "Plumi",
-    type: "Something",
-    price: "$10",
-    id: 4,
-    walletId: "0x123",
-  },
-  {
-    image: "/images/01.png",
-    name: "Plumi",
-    type: "Something",
-    price: "$10",
-    id: 5,
-    walletId: "0x123",
-  },
-];
 export default function Explore() {
   const [plants, setPlants] = useState([]);
 
-  const { logout, user, setLoadingModal, addAlert } = useData();
+  const { logout, user, setLoadingModal, addAlert, setCurrentPage } = useData();
 
   const getPlants = async () => {
     setLoadingModal(true);
-    let not_my_plants = tmpPlants.filter(
-      (plant) => plant.walletId != user.walletId
-    );
-    setPlants(not_my_plants);
     // TODO: call api
-    setLoadingModal(false);
-    addAlert({
-      message: "Plants loaded successfully",
-      type: "success",
-      time: 3000,
-    });
+    axios
+      .get(process.env.NEXT_PUBLIC_SERVER_URL)
+      .then((res) => {
+        console.log("hey", res.data);
+        const response = parseResponse(res.data);
+        console.log(response);
+        let not_my_plants = response.filter(
+          (plant) => plant.walletID != user.walletId
+        );
+        setPlants(not_my_plants);
+        addAlert({
+          type: "success",
+          message: "Plant added successfully",
+          time: 3000,
+        });
+        setLoadingModal(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        addAlert({ type: "error", message: "Failed to add plant", time: 3000 });
+        setLoadingModal(false);
+      });
   };
 
   useEffect(() => {
@@ -75,6 +46,7 @@ export default function Explore() {
 
   // Update page title
   useEffect(() => {
+    setCurrentPage("Explore");
     document.title = "Planted | Explore";
   }, []);
 
@@ -85,7 +57,7 @@ export default function Explore() {
           return (
             <div key={plant.id} className={`${styles.plant} shadow`}>
               <div className={styles.imageWrapper}>
-                <img src={plant.image} alt={plant.name} />
+                <img src={plant.imgURL} alt={plant.name} />
                 <Link href={`/explore/${plant.id}`} className={styles.link}>
                   See Plant
                 </Link>

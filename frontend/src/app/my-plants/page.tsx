@@ -3,64 +3,40 @@
 import styles from "@/styles/pages/Plants.module.scss";
 import { useEffect, useState } from "react";
 import { useData } from "@/contexts/States";
+import axios from "axios";
+import { parseResponse } from "@/utils/helper";
 
 import Link from "next/link";
 
-const tmpPlants = [
-  {
-    image: "/images/01.png",
-    name: "Plumi",
-    type: "Something",
-    price: "$10",
-    id: 1,
-    walletId: "0x123",
-  },
-  {
-    image: "/images/01.png",
-    name: "Plumi",
-    type: "Something",
-    price: "$10",
-    id: 2,
-    walletId: "0x123",
-  },
-  {
-    image: "/images/01.png",
-    name: "Plumi",
-    type: "Something",
-    price: "$10",
-    id: 3,
-    walletId: "0x123",
-  },
-  {
-    image: "/images/01.png",
-    name: "Plumi",
-    type: "Something",
-    price: "$10",
-    id: 4,
-    walletId: "0x123",
-  },
-  {
-    image: "/images/01.png",
-    name: "Plumi",
-    type: "Something",
-    price: "$10",
-    id: 5,
-    walletId: "0x123",
-  },
-];
 export default function MyPlants() {
   const [plants, setPlants] = useState([]);
 
-  const { logout, user, setLoadingModal } = useData();
+  const { logout, user, setLoadingModal, setCurrentPage, addAlert } = useData();
 
   const getPlants = async () => {
     setLoadingModal(true);
-    let my_plants = tmpPlants.filter(
-      (plant) => plant.walletId == user.walletId
-    );
-    // TODO: get the plants from the blockchain
-    setPlants(my_plants);
-    setLoadingModal(false);
+    // TODO: call api
+    axios
+      .get(process.env.NEXT_PUBLIC_SERVER_URL)
+      .then((res) => {
+        console.log(res.data);
+        const response = parseResponse(res.data);
+        let not_my_plants = response.filter(
+          (plant) => plant.walletID == user.walletId
+        );
+        setPlants(not_my_plants);
+        addAlert({
+          type: "success",
+          message: "Plant added successfully",
+          time: 3000,
+        });
+        setLoadingModal(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        addAlert({ type: "error", message: "Failed to add plant", time: 3000 });
+        setLoadingModal(false);
+      });
   };
 
   useEffect(() => {
@@ -69,6 +45,7 @@ export default function MyPlants() {
 
   // Update page title
   useEffect(() => {
+    setCurrentPage("My plants");
     document.title = "Planted | My Plants";
   }, []);
 
@@ -79,7 +56,7 @@ export default function MyPlants() {
           return (
             <div key={plant.id} className={`${styles.plant} shadow`}>
               <div className={styles.imageWrapper}>
-                <img src={plant.image} alt={plant.name} />
+                <img src={plant.imgURL} alt={plant.name} />
                 <Link href={`/explore/${plant.id}`} className={styles.link}>
                   See Plant
                 </Link>

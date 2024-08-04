@@ -5,9 +5,9 @@ import { useData } from "@/contexts/States";
 import styles from "@/styles/pages/Login.module.scss";
 
 export default function Login() {
-  const { login } = useData();
+  const { login, setCurrentPage } = useData();
   const [walletId, setWalletId] = useState("");
-  const [secret, setSecret] = useState("");
+  const [seed, setSeed] = useState("");
 
   const { setLoadingModal } = useData();
 
@@ -18,13 +18,14 @@ export default function Login() {
     let randomNumber = Math.random() * 3 + 1;
     // TODO: login
     setTimeout(() => {
-      login(walletId, secret);
+      login(walletId, seed);
       setLoadingModal(false);
     }, randomNumber * 1000);
   };
 
   // Update page title
   useEffect(() => {
+    setCurrentPage("");
     document.title = "Planted | Login";
   }, []);
   return (
@@ -39,9 +40,9 @@ export default function Login() {
         />
         <input
           type="password"
-          placeholder="Secret"
-          value={secret}
-          onChange={(e) => setSecret(e.target.value)}
+          placeholder="Seed"
+          value={seed}
+          onChange={(e) => setSeed(e.target.value)}
         />
         <button type="submit">Login</button>
       </form>

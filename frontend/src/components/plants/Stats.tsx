@@ -1,6 +1,16 @@
 import styles from "@/styles/components/plants/Stats.module.scss";
 
-export default function Stats({ stats }: any) {
+const dict = {
+  colVibrancy: "Color Vibrancy",
+  LAI: "Leaf Area Index",
+  wilting: "Wilting",
+  spotting: "Spotting",
+  symmetry: "Symmetry",
+  growthPat: "Growth Pattern",
+  pests: "Pests",
+  flowering: "Flowering",
+};
+export default function Stats({ plant, names }: any) {
   const getStrength = (strength: any) => {
     if (strength < 50) {
       return "bad";
@@ -10,28 +20,29 @@ export default function Stats({ stats }: any) {
       return "good";
     }
   };
+
   return (
     <div className={styles.stats}>
-      {stats.map((stat: any, index: any) => {
+      {names.map((name: any, index: any) => {
         return (
           <div className={`${styles.stat} shadow`} key={index}>
-            <div className={styles.name}>{stat.name}</div>
+            <div className={styles.name}>{dict[name]}</div>
             <div className={styles.container}>
-              <div className={styles.strength}>Strength: {stat.strength}%</div>
+              <div className={styles.strength}>Strength: {plant[name]}%</div>
               <div
                 className={`${styles.goodbad} ${
-                  getStrength(stat.strength) == "bad"
+                  getStrength(plant[name]) == "bad"
                     ? styles.red
-                    : getStrength(stat.strength) == "normal"
+                    : getStrength(plant[name]) == "normal"
                     ? styles.blue
                     : styles.green
                 }`}
               >
-                {getStrength(stat.strength)}
+                {getStrength(plant[name])}
               </div>
             </div>
-            {stat.advice && getStrength(stat.strength) != "good" ? (
-              <div className={styles.detail}>{stat.advice}</div>
+            {plant[name + "Advice"] && getStrength(plant[name]) != "good" ? (
+              <div className={styles.detail}>{plant[name + "Advice"]}</div>
             ) : (
               ""
             )}
