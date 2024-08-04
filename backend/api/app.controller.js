@@ -42,6 +42,31 @@ Given an image of a plant and a JSON object of it's properties, simulate a conve
 You will respond to user messages by "speaking" as the plant. You will act as nothing but the plant, focusing on helping them to understand how to take better care of you. You will keep responses short.`;
 
 export default class AppCtrl {
+    static calculateAverage(data) {
+        const relevantKeys = [
+            'colVibrancy',
+            'LAI',
+            'wilting',
+            'spotting',
+            'symmetry',
+            'growthPat',
+            'pests',
+            'flowering'
+        ];
+        
+        let sum = 0;
+        let count = 0;
+
+        Object.values(data).forEach(entry => {
+            if (relevantKeys.includes(entry.key) && !isNaN(entry.value)) {
+                sum += parseInt(entry.value, 10);
+                count++;
+            }
+        });
+
+        return count === 0 ? 0 : sum / count;
+    }
+
     static async dataFromImg(req, res, next) {
         let imgURL = req.body.imgURL
 
@@ -183,7 +208,7 @@ export default class AppCtrl {
         res.json(response)
     }
 
-    static async apiGetPlants(req, res, next) {
+    /*static async apiGetPlants(req, res, next) {
         fetch('http://terrahacks.onrender.com/getPlants')
             .then(response => response.json())
             .then(data => {
@@ -194,62 +219,28 @@ export default class AppCtrl {
                 console.error('There was an error making the GET request:', error);
                 res.json({ status: "error" })
         });
-    }
-
-    /*static async apiPutPlant(req, res, next) {
-        let id = req.body.id
-
-        fetch('http://terrahacks.onrender.com/getPlant/' + id)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-
-                let body = {
-                    "name": "",
-                    "imgURL": "",
-                    "walletID": "",
-                    "seed": "",
-                    "type": "",
-                    "colVibrancy": 0,
-                    "colVibrancyAdvice": "",
-                    "LAI": 0,
-                    "LAIAdvice": "",
-                    "wilting": 0,
-                    "wiltingAdvice": "",
-                    "spotting": 0,
-                    "spottingAdvice": "",
-                    "symmetry": 0,
-                    "symmetryAdvice": "",
-                    "growthPat": 0,
-                    "growthPatAdvice": "",
-                    "pests": 0,
-                    "pestsAdvice": "",
-                    "flowering": 0,
-                    "floweringAdvice": ""
-                };
-
-                data.forEach(item => {
-                    if (body.hasOwnProperty(item.key)) {
-                        if (!isNaN(item.value)) {
-                            body[item.key] = parseInt(item.value, 10);
-                        } else {
-                            body[item.key] = item.value;
-                        }
-                    }f
-                });
-
-                console.log(body); 
-                // res.json(body); 
-
-                const _req = {body}; 
-
-                const _response = await AppCtrl.dataFromImg(_req, res, next)
-            })
-            .catch(error => {
-                console.error('There was an error making the GET request:', error);
-                res.json({ status: "error" })
-        });
     }*/
+
+    static async apiGetPlants(req, res, next) {
+        try {
+            const response = await fetch('http://terrahacks.onrender.com/getPlants');
+            let data = await response.json();
+
+            data = data.map(plant => {
+                const averageHealthScore = AppCtrl.calculateAverage(plant);
+                return {
+                    ...plant,
+                    averageHealthScore: averageHealthScore
+                };
+            });
+
+            console.log(data);
+            res.json(data);
+        } catch (error) {
+            console.error('There was an error making the GET request:', error);
+            res.json({ status: "error" });
+        }
+    }
 
     static async apiPutPlant(req, res, next) {
         try {
@@ -353,7 +344,7 @@ export default class AppCtrl {
         }
     }        
 
-    static async apiGetPlant(req, res, next) {
+    /*static async apiGetPlant(req, res, next) {
         let id = req.body.id
 
         fetch('http://terrahacks.onrender.com/getPlant/' + id)
@@ -366,6 +357,28 @@ export default class AppCtrl {
                 console.error('There was an error making the GET request:', error);
                 res.json({ status: "error" })
         });
+    }*/
+
+    static async apiGetPlant(req, res, next) {
+        try {
+            let id = req.body.id;
+
+            const response = await fetch('http://terrahacks.onrender.com/getPlant/' + id);
+            let data = await response.json();
+
+            const averageHealthScore = AppCtrl.calculateAverage(data);
+
+            const plantWithAverage = {
+                ...data,
+                averageHealthScore: averageHealthScore
+            };
+
+            console.log(plantWithAverage);
+            res.json(plantWithAverage);
+        } catch (error) {
+            console.error('There was an error making the GET request:', error);
+            res.json({ status: "error" });
+        }
     }
 
     static async apiTalkPlant(req, res, next) {
@@ -430,5 +443,12 @@ export default class AppCtrl {
 
         // res.json({ message: response.choices[0]["message"]["content"] })
         res.json ({message: _response.choices[0]["message"]["content"]})
+    }
+
+    static async sellPlant(req, res, next) {
+        let id = req.body.id
+        let fromWalletID = req.body.fromWalletID
+        let fromWalletSeed = req.body.fromWalletSeed
+        let toWalletID = req.body.toWalletID
     }
 }
