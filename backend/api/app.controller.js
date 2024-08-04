@@ -231,13 +231,15 @@ export default class AppCtrl {
             const response = await fetch('http://terrahacks.onrender.com/getPlants');
             let data = await response.json();
     
-            // Add average health score as a key-value property to each plant
+            // Add average health score as a key-value pair in the array structure for each plant
             data = data.map(plant => {
                 const averageHealthScore = AppCtrl.calculateAverage(plant);
-                return {
-                    ...plant,
-                    [Object.keys(plant).length]: { key: 'averageHealthScore', value: averageHealthScore }
-                };
+                const plantArray = Object.values(plant);
+    
+                // Push the new key-value pair to the array
+                plantArray.push({ key: 'averageHealthScore', value: averageHealthScore });
+    
+                return plantArray;
             });
     
             console.log(data);
