@@ -62,7 +62,6 @@ export default function Chat({ id, imgURL }: any) {
   useEffect(() => {
     if (audio && audioRef.current) {
       audioRef.current.play();
-      setAudio(null);
     }
   }, [audioRef.current]);
 

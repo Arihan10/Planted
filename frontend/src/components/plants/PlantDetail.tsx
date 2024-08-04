@@ -14,7 +14,7 @@ export default function PlantDetail({
   imgURL,
   name,
   type,
-  price,
+  averageHealthScore,
   walletID,
   id,
   setCurrentPlant,
@@ -104,7 +104,7 @@ export default function PlantDetail({
         <div
           className={`${styles.priceAndBuy}  ${isMine() ? styles.center : ""}`}
         >
-          <div className={styles.price}>{price}</div>
+          <div className={styles.price}>{averageHealthScore}</div>
           {isMine() ? (
             ""
           ) : (
